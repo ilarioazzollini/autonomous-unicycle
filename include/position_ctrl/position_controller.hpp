@@ -4,8 +4,8 @@
 
 class PosCtrl {
 public:
-  VelCommands input_function(double e_x, double e_y, Pose2D pose);
   PosCtrl(double len, double gain_x, double gain_y);
+  VelCommands input_function(double e_x, double e_y, Pose2D pose);
 
 private:
   double m_len;
