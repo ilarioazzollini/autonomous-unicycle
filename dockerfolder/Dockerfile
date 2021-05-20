@@ -10,3 +10,4 @@ ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/London"
 RUN apt-get -y install tzdata
 
 RUN apt-get install -y cmake
+RUN apt-get install -y libgtest-dev

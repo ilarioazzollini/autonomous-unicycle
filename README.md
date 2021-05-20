@@ -29,17 +29,14 @@ root@d59925879f1a:~/autonomous-unicycle/_build# make
 root@d59925879f1a:~/autonomous-unicycle/_build# ls
 CMakeCache.txt  Makefile             libunicycle_control.a
 CMakeFiles      cmake_install.cmake  test
-root@d59925879f1a:~/autonomous-unicycle/_build# cd test
-root@d59925879f1a:~/autonomous-unicycle/_build/test# ls
-CMakeFiles  Makefile  cmake_install.cmake  test_model  test_position_controller
-root@d59925879f1a:~/autonomous-unicycle/_build/test# ./test_model
-All tests successfully passed.
-root@d59925879f1a:~/autonomous-unicycle/_build/test# ./test_position_controller
-v: 0, omega: 0
-x: 9.99906
-y: 9.99901
-theta: 0.811262
-v: 0.00138113, omega: 0
-9.21
-All tests successfully passed.
+root@d59925879f1a:~/autonomous-unicycle/_build# ctest --output-on-failure
+Test project /root/autonomous-unicycle/_build
+    Start 1: test_model
+1/2 Test #1: test_model .......................   Passed    0.02 sec
+    Start 2: test_position_controller
+2/2 Test #2: test_position_controller .........   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   0.03 sec
 ```
