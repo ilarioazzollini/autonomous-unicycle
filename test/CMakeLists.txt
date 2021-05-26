@@ -15,3 +15,8 @@ add_executable(test_position_controller)
 target_link_libraries(test_position_controller PUBLIC unicycle_control GTest::GTest)
 target_sources(test_position_controller PRIVATE test_position_controller.cpp)
 add_test(NAME test_position_controller COMMAND test_position_controller)
+
+add_executable(test_planner)
+target_link_libraries(test_planner PUBLIC planning GTest::GTest)
+target_sources(test_planner PRIVATE test_planner.cpp)
+add_test(NAME test_planner COMMAND test_planner)

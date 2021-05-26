@@ -17,4 +17,4 @@ Pose2D KinModel::integration(double v, double omega, double delta_t) {
   m_current_pose = next_pose;
 
   return next_pose;
-};
+}
