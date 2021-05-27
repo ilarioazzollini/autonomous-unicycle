@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 #include "pose2d.hpp"
-#include "position_ctrl/model_f_euler_dis.hpp"
+#include "control/model_f_euler_dis.hpp"
 
 TEST(test_model, zero_vels_integration)
 {

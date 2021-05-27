@@ -1,4 +1,4 @@
-#include "position_ctrl/position_controller.hpp"
+#include "control/position_controller.hpp"
 #include <math.h>
 
 PosCtrl::PosCtrl(double len, double gain_x, double gain_y) {

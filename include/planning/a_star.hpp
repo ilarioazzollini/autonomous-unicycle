@@ -6,12 +6,14 @@
 struct MapCoord {
   size_t row;
   size_t column;
+};
 
-  MapCoord& operator=(const MapCoord& other){
-    row = other.row;
-    column = other.column;
-    return *this;
-  }
+inline bool operator==(MapCoord coord1, MapCoord coord2) {
+  return (coord1.row == coord2.column) && (coord1.row == coord2.column);
+};
+
+inline bool operator!=(MapCoord coord1, MapCoord coord2) {
+  return (coord1.row != coord2.column) || (coord1.row != coord2.column);
 };
 
 class AStar {

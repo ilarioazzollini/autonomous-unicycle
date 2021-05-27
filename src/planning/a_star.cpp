@@ -1,4 +1,5 @@
-#include "motion_planning/a_star.hpp"
+#include "planning/a_star.hpp"
+#include <algorithm>
 #include <math.h>
 #include <iostream>
 
@@ -60,28 +61,20 @@ std::vector<MapCoord> AStar::compute_plan(Matrix occupancy_matrix, MapCoord star
     min_cost = 1000;
     best_neighbor = current_point;
     visited_points.push_back(current_point);
-    int k = 0;
 
-    while ((current_point.row != end_point.row) || (current_point.column != end_point.column)){
-        k++;
+    while (current_point != end_point){
 
-        if (k > 15){
-            break;
-        }
+        std::cout<< "current_point: " << current_point.row << " " << current_point.column <<std::endl;
 
         neighbors = get_neighbors(occupancy_matrix, current_point);
 
         for (size_t i=0; i < neighbors.size(); i++){
             double current_cost = get_cost_value(neighbors[i],end_point);
-            std::cout<< "neighbor row " << neighbors[i].row << " neighbor column " << neighbors[i].column <<std::endl;
-            std::cout<< "current cost: " << current_cost << std::endl;
+            std::cout<< "neighbor: " << neighbors[i].row << " " << neighbors[i].column << " with cost: "<< current_cost <<std::endl;
             if (current_cost < min_cost){
-                bool already_visited = false;
-                for (size_t j=0; j < visited_points.size(); j++){
-                    if (visited_points[j].row==neighbors[i].row && visited_points[j].column==neighbors[i].column){
-                        already_visited = true;
-                    }
-                }
+                // std::find returns an iterator to the found element or an iterator to end() if nothing is found
+                std::vector<MapCoord>::iterator visited_iter = std::find(visited_points.begin(), visited_points.end(), neighbors[i]);
+                bool already_visited = visited_iter != visited_points.end();
                 if (!already_visited){
                     min_cost = current_cost;
                     best_neighbor = neighbors[i];
@@ -91,9 +84,6 @@ std::vector<MapCoord> AStar::compute_plan(Matrix occupancy_matrix, MapCoord star
 
         current_point = best_neighbor;
         visited_points.push_back(current_point);
-
-        std::cout<< "row " << current_point.row << " column " << current_point.column <<std::endl;
-
     }
 
     return visited_points;

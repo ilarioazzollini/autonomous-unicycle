@@ -1,7 +1,7 @@
 #include "assert.h"
 #include "pose2d.hpp"
-#include "position_ctrl/model_f_euler_dis.hpp"
-#include "position_ctrl/position_controller.hpp"
+#include "control/model_f_euler_dis.hpp"
+#include "control/position_controller.hpp"
 #include "vel_commands.hpp"
 #include <iostream>
 
