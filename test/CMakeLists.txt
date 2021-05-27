@@ -2,17 +2,17 @@
 find_package(GTest)
 
 add_executable(test_model)
-target_link_libraries(test_model PUBLIC unicycle_control GTest::GTest)
+target_link_libraries(test_model PUBLIC control GTest::GTest)
 target_sources(test_model PRIVATE test_model.cpp)
 add_test(NAME test_model COMMAND test_model)
 
 add_executable(test_matrix)
-target_link_libraries(test_matrix PUBLIC unicycle_control GTest::GTest)
+target_link_libraries(test_matrix PUBLIC control GTest::GTest)
 target_sources(test_matrix PRIVATE test_matrix.cpp)
 add_test(NAME test_matrix COMMAND test_matrix)
 
 add_executable(test_position_controller)
-target_link_libraries(test_position_controller PUBLIC unicycle_control GTest::GTest)
+target_link_libraries(test_position_controller PUBLIC control GTest::GTest)
 target_sources(test_position_controller PRIVATE test_position_controller.cpp)
 add_test(NAME test_position_controller COMMAND test_position_controller)
 

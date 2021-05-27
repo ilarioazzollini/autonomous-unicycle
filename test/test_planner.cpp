@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 #include "matrix.hpp"
-#include "motion_planning/a_star.hpp"
+#include "planning/a_star.hpp"
 
 TEST(test_planner, no_obstacles)
 {

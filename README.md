@@ -27,7 +27,7 @@ root@d59925879f1a:~/autonomous-unicycle# cd _build/
 root@d59925879f1a:~/autonomous-unicycle/_build# cmake ..
 root@d59925879f1a:~/autonomous-unicycle/_build# make 
 root@d59925879f1a:~/autonomous-unicycle/_build# ls
-CMakeCache.txt  Makefile             libunicycle_control.a
+CMakeCache.txt  Makefile             libcontrol.a
 CMakeFiles      cmake_install.cmake  test
 root@d59925879f1a:~/autonomous-unicycle/_build# ctest --output-on-failure
 Test project /root/autonomous-unicycle/_build
