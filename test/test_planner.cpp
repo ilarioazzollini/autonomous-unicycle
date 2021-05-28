@@ -19,7 +19,7 @@ TEST(test_planner, no_obstacles)
     goal_point.column = 4;
 
     AStar planner = AStar();
-    std::vector<MapCoord> plan = planner.compute_plan(occupancy_matrix, starting_point, goal_point);
+    std::vector<Node> plan = planner.compute_plan(occupancy_matrix, starting_point, goal_point);
 
     EXPECT_EQ(plan.size(), 9);
     EXPECT_EQ(plan[plan.size() - 1].row, goal_point.row);
