@@ -22,8 +22,7 @@ TEST(test_planner, no_obstacles)
     std::vector<Node> plan = planner.compute_plan(occupancy_matrix, starting_point, goal_point);
 
     EXPECT_EQ(plan.size(), 9);
-    EXPECT_EQ(plan[plan.size() - 1].row, goal_point.row);
-    EXPECT_EQ(plan[plan.size() - 1].column, goal_point.column);
+    EXPECT_EQ(plan[plan.size() - 1].this_point, goal_point);
 }
 
 int main(int argc, char **argv)

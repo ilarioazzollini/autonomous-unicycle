@@ -60,8 +60,8 @@ std::vector<Node> AStar::compute_plan(Matrix occupancy_matrix, MapCoord starting
     double current_cost_g = 0; // starting point cost_g
 
     // Create the initial node and set it as the first explored node
-    new_node.this_node = starting_point;
-    new_node.previous_node = starting_point;
+    new_node.this_point = starting_point;
+    new_node.previous_point = starting_point;
     new_node.cost_g = current_cost_g;
     new_node.cost_h = get_cost_value(current_point,end_point);
     explored_nodes.push_back(new_node);
@@ -89,8 +89,8 @@ std::vector<Node> AStar::compute_plan(Matrix occupancy_matrix, MapCoord starting
                 current_cost_g++; // Increment the Dijkstra's cost
                 for (size_t i=0; i < neighbors.size(); i++){
                     new_point = neighbors[i];
-                    new_node.this_node = new_point;
-                    new_node.previous_node = current_point;
+                    new_node.this_point = new_point;
+                    new_node.previous_point = current_point;
                     new_node.cost_g = current_cost_g;
                     new_node.cost_h = get_cost_value(new_point,end_point);
                     explored_nodes.push_back(new_node);

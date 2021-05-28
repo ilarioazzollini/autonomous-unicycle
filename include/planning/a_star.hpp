@@ -13,7 +13,7 @@ struct Node {
   MapCoord this_point;
   double cost_g; // Dijkstra's cost
   double cost_h; // Greedy's cost  
-}
+};
 
 inline bool operator==(MapCoord point1, MapCoord point2) {
   return (point1.row == point2.column) && (point1.row == point2.column);
