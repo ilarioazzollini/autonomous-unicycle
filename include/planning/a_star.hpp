@@ -16,11 +16,11 @@ struct Node {
 };
 
 inline bool operator==(MapCoord point1, MapCoord point2) {
-  return (point1.row == point2.column) && (point1.row == point2.column);
+  return (point1.row == point2.row) && (point1.column == point2.column);
 };
 
 inline bool operator!=(MapCoord point1, MapCoord point2) {
-  return (point1.row != point2.column) || (point1.row != point2.column);
+  return (point1.row != point2.row) || (point1.column != point2.column);
 };
 
 inline bool operator<(Node node1, Node node2) {
@@ -28,7 +28,7 @@ inline bool operator<(Node node1, Node node2) {
 };
 
 inline bool operator==(Node node1, Node node2) {
-  return (node1.previous_point == node2.previous_point) && (node1.this_point == node2.this_point) && (node1.cost_g == node2.cost_g) && (node1.cost_h == node2.cost_h);
+  return (node1.this_point == node2.this_point);
 };
 
 class AStar {
@@ -37,7 +37,7 @@ public:
     AStar();
 
     // Compute Plan function -> gives as output an ordered vector of nodes
-    std::vector<Node> compute_plan(Matrix occupancy_matrix, MapCoord starting_point, MapCoord end_point);
+    std::vector<MapCoord> compute_plan(Matrix occupancy_matrix, MapCoord starting_point, MapCoord end_point);
 
 private:
     // Get feasible neighbors 

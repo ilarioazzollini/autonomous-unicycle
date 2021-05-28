@@ -50,78 +50,92 @@ double AStar::get_cost_value(MapCoord this_point, MapCoord end_point){
     return cost_value;
 }
 
-std::vector<Node> AStar::compute_plan(Matrix occupancy_matrix, MapCoord starting_point, MapCoord end_point) {
+std::vector<MapCoord> AStar::compute_plan(Matrix occupancy_matrix, MapCoord starting_point, MapCoord end_point) {
     MapCoord current_point;
     MapCoord new_point;
     Node new_node;
     std::vector<MapCoord> neighbors;
     std::vector<Node> explored_nodes;
     std::vector<Node> visited_nodes;
-    double current_cost_g = 0; // starting point cost_g
 
     // Create the initial node and set it as the first explored node
     new_node.this_point = starting_point;
     new_node.previous_point = starting_point;
-    new_node.cost_g = current_cost_g;
+    new_node.cost_g = 0; // starting point cost_g
     new_node.cost_h = get_cost_value(current_point,end_point);
     explored_nodes.push_back(new_node);
 
     // Initialization
     current_point = starting_point;
 
-    while ( (explored_nodes.size()!= 0) && (current_point != end_point) ){
+    while (!explored_nodes.empty()){
 
+        std::cout<<"---------------"<<std::endl;
         // Sort the list of explored nodes
         std::sort (explored_nodes.begin(), explored_nodes.end());
 
+
         // The first node has the min cost so it's the best -> move there and go visit
         visited_nodes.push_back(explored_nodes[0]);
+        double g_cost = explored_nodes[0].cost_g;
         current_point = explored_nodes[0].this_point; // Update current_point
+
+        std::cout<< "Current point: "<< current_point.row << " "<< current_point.column << " with cost G: "<< explored_nodes[0].cost_g << " H "<< explored_nodes[0].cost_h<<std::endl;
+
         explored_nodes.erase (explored_nodes.begin()); // Erase it from the explored, it will not be an option in the future
 
-        while (current_point != end_point){
+        if (current_point == end_point) {
+            break;
+        }
 
-            // Explore: 1) Get neighbors and
-            //          2) compute the related costs and
-            //          3) push them inside the list of explored nodes
-            neighbors = get_neighbors(occupancy_matrix, current_point);
-            if (neighbors.size() != 0){
-                current_cost_g++; // Increment the Dijkstra's cost
-                for (size_t i=0; i < neighbors.size(); i++){
-                    new_point = neighbors[i];
-                    new_node.this_point = new_point;
-                    new_node.previous_point = current_point;
-                    new_node.cost_g = current_cost_g;
-                    new_node.cost_h = get_cost_value(new_point,end_point);
-                    explored_nodes.push_back(new_node);
+        // Explore: 1) Get neighbors and
+        //          2) compute the related costs and
+        //          3) push them inside the list of explored nodes
+        neighbors = get_neighbors(occupancy_matrix, current_point);
+        std::cout<<"Found "<< neighbors.size()<< " neighbors"<<std::endl;
+        for (size_t i=0; i < neighbors.size(); i++){
+            new_point = neighbors[i];
+            std::cout<<"neighbor: "<< new_point.row << " "<< new_point.column<<std::endl;
+            bool found = false;
+            for (size_t j = 0; j < explored_nodes.size(); j++) {
+                if (explored_nodes[j].this_point == new_point) {
+                    std::cout<<"Found in explored"<<std::endl;
+                    found = true;
+                }
+            }
+            for (size_t j = 0; j < visited_nodes.size(); j++) {
+                if (visited_nodes[j].this_point == new_point) {
+                    std::cout<<"Found in visited"<<std::endl;
+                    found = true;
                 }
             }
 
+            if (!found) {
+                new_node.this_point = new_point;
+                new_node.previous_point = current_point;
+                new_node.cost_g = g_cost + 1;
+                new_node.cost_h = get_cost_value(new_point,end_point);
+                std::cout<<"Add neighbor with cost G "<< new_node.cost_g << " H "<< new_node.cost_h<<std::endl;
+                explored_nodes.push_back(new_node);
+            }
         }
-
 
     }
 
     // Final plan reconstruction
-    std::vector<Node> final_plan;
+    std::vector<MapCoord> final_plan;
 
-    // Notice that at this point we know the plan consists of (current_cost_g + 1) points
-    // We start by pushing the last visited node (which, hopefully, is the end point - if the problem was feasible -)
-    size_t vis_size = visited_nodes.size();
-    size_t k = vis_size - 1;
-
-    for (size_t j=0; j <= current_cost_g; j++){
-
-        final_plan.push_back(visited_nodes[k]);
-        new_point = visited_nodes[k].previous_point;
-
-        for (size_t w = 0; w < vis_size; w++){
-            if (visited_nodes[w].this_point == new_point){
-                k = w;
+    Node plan_node = visited_nodes[visited_nodes.size() - 1];
+    final_plan.push_back(plan_node.this_point);
+    
+    while(plan_node.this_point != starting_point) {
+        for (size_t w = 0; w < visited_nodes.size(); w++){
+            if (visited_nodes[w].this_point == plan_node.previous_point){
+                plan_node = visited_nodes[w];
+                break;
             }
         }
-
-
+        final_plan.push_back(plan_node.this_point);
     }
 
     // Reverse the order in order to have the plan from start to end

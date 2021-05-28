@@ -19,10 +19,10 @@ TEST(test_planner, no_obstacles)
     goal_point.column = 4;
 
     AStar planner = AStar();
-    std::vector<Node> plan = planner.compute_plan(occupancy_matrix, starting_point, goal_point);
+    std::vector<MapCoord> plan = planner.compute_plan(occupancy_matrix, starting_point, goal_point);
 
     EXPECT_EQ(plan.size(), 9);
-    EXPECT_EQ(plan[plan.size() - 1].this_point, goal_point);
+    EXPECT_EQ(plan[plan.size() - 1], goal_point);
 }
 
 int main(int argc, char **argv)
