@@ -16,15 +16,15 @@ struct Node {
 };
 
 inline bool operator==(MapCoord point1, MapCoord point2) {
-  return (point1.row == point2.column) && (point1.row == point2.column);
+  return (point1.row == point2.row) && (point1.column == point2.column);
 };
 
 inline bool operator!=(MapCoord point1, MapCoord point2) {
-  return (point1.row != point2.column) || (point1.row != point2.column);
+  return (point1.row != point2.row) || (point1.column != point2.column);
 };
 
 inline bool operator<(Node node1, Node node2) {
-  return ( (node1.cost_g + node1.cost_h) < (node2.cost_g + node2.cost_h) );
+  return (node1.this_point == node2.this_point);
 };
 
 inline bool operator==(Node node1, Node node2) {
