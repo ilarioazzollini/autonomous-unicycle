@@ -24,7 +24,12 @@ inline bool operator!=(MapCoord point1, MapCoord point2) {
 };
 
 inline bool operator<(Node node1, Node node2) {
-  return (node1.this_point == node2.this_point);
+  if (node1.cost_g == node2.cost_g){
+    return (node1.cost_h < node2.cost_h);
+  }
+  else {
+      return (node1.cost_g + node1.cost_h < node2.cost_g + node2.cost_h);
+  }
 };
 
 inline bool operator==(Node node1, Node node2) {

@@ -57,6 +57,9 @@ std::vector<Node> AStar::compute_plan(Matrix occupancy_matrix, MapCoord starting
     std::vector<Node> visited_nodes;
     double current_cost_g;
 
+    // Print occupancy matrix
+    std::cout<<"occupancy matrix \n" << occupancy_matrix << std::endl;
+
     // Create the initial node and set it as the first explored node
     new_node.this_point = starting_point;
     new_node.previous_point = starting_point;
@@ -87,41 +90,41 @@ std::vector<Node> AStar::compute_plan(Matrix occupancy_matrix, MapCoord starting
 
         explored_nodes.erase (explored_nodes.begin()); // Erase it from the explored, it will not be an option in the future
 
-        if (current_point != end_point){
+        if (current_point == end_point){
+            break;
+        }
 
             // Explore: 1) Get neighbors and
             //          2) compute the related costs and
             //          3) push them inside the list of explored nodes
-            neighbors = get_neighbors(occupancy_matrix, current_point);
+        neighbors = get_neighbors(occupancy_matrix, current_point);
 
 
-            for (size_t i=0; i < neighbors.size(); i++){
-                new_point = neighbors[i];
-                std::cout<<"neighbor: "<< new_point.row << " "<< new_point.column<<std::endl;
-                bool found = false;
-                for (size_t j = 0; j < explored_nodes.size(); j++) {
-                    if (explored_nodes[j].this_point == new_point) {
-                        std::cout<<"Found in explored"<<std::endl;
-                        found = true;
-                    }
+        for (size_t i=0; i < neighbors.size(); i++){
+            new_point = neighbors[i];
+            std::cout<<"neighbor: "<< new_point.row << " "<< new_point.column<<std::endl;
+            bool found = false;
+            for (size_t j = 0; j < explored_nodes.size(); j++) {
+                if (explored_nodes[j].this_point == new_point) {
+                    std::cout<<"Found in explored"<<std::endl;
+                    found = true;
                 }
-                for (size_t j = 0; j < visited_nodes.size(); j++) {
-                    if (visited_nodes[j].this_point == new_point) {
-                        std::cout<<"Found in visited"<<std::endl;
-                        found = true;
-                    }
-                }
-
-                if (!found) {
-                    new_node.this_point = new_point;
-                    new_node.previous_point = current_point;
-                    new_node.cost_g = current_cost_g + 1;
-                    new_node.cost_h = get_cost_value(new_point,end_point);
-                    std::cout<<"Add neighbor with cost G "<< new_node.cost_g << " H "<< new_node.cost_h<<std::endl;
-                    explored_nodes.push_back(new_node);
+            }
+            for (size_t j = 0; j < visited_nodes.size(); j++) {
+                if (visited_nodes[j].this_point == new_point) {
+                    std::cout<<"Found in visited"<<std::endl;
+                    found = true;
                 }
             }
 
+            if (!found) {
+                new_node.this_point = new_point;
+                new_node.previous_point = current_point;
+                new_node.cost_g = current_cost_g + 1;
+                new_node.cost_h = get_cost_value(new_point,end_point);
+                std::cout<<"Add neighbor with cost G "<< new_node.cost_g << " H "<< new_node.cost_h<<std::endl;
+                explored_nodes.push_back(new_node);
+            }
         }
 
 

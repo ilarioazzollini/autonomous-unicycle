@@ -63,7 +63,8 @@ inline std::ostream &operator<<(std::ostream &outstr, Matrix matrix)
         for (size_t j = 0; j < matrix.columns(); j++){
             outstr<<" " << matrix[i][j];
         }
-        outstr << " ]";
+        outstr << " ]"<<std::endl;
+        
     }
 
     return outstr;
