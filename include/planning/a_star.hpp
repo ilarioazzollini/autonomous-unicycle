@@ -8,32 +8,12 @@ struct MapCoord {
   size_t column;
 };
 
-struct Node {
-  MapCoord previous_point;
-  MapCoord this_point;
-  double cost_g; // Dijkstra's cost
-  double cost_h; // Greedy's cost  
-};
-
-inline bool operator==(MapCoord point1, MapCoord point2) {
+inline bool operator==(const MapCoord& point1, const MapCoord& point2) {
   return (point1.row == point2.row) && (point1.column == point2.column);
 };
 
-inline bool operator!=(MapCoord point1, MapCoord point2) {
+inline bool operator!=(const MapCoord& point1, const MapCoord& point2) {
   return (point1.row != point2.row) || (point1.column != point2.column);
-};
-
-inline bool operator<(Node node1, Node node2) {
-  if (node1.cost_g == node2.cost_g){
-    return (node1.cost_h < node2.cost_h);
-  }
-  else {
-      return (node1.cost_g + node1.cost_h < node2.cost_g + node2.cost_h);
-  }
-};
-
-inline bool operator==(Node node1, Node node2) {
-  return (node1.previous_point == node2.previous_point) && (node1.this_point == node2.this_point) && (node1.cost_g == node2.cost_g) && (node1.cost_h == node2.cost_h);
 };
 
 class AStar {
@@ -42,12 +22,12 @@ public:
     AStar();
 
     // Compute Plan function -> gives as output an ordered vector of nodes
-    std::vector<Node> compute_plan(Matrix occupancy_matrix, MapCoord starting_point, MapCoord end_point);
+    std::vector<MapCoord> compute_plan(const Matrix& occupancy_matrix, const MapCoord& starting_point, const MapCoord& end_point);
 
 private:
     // Get feasible neighbors 
-    std::vector<MapCoord> get_neighbors(Matrix occupancy_matrix, MapCoord current_point);
+    std::vector<MapCoord> get_neighbors(const Matrix& occupancy_matrix, const MapCoord& current_point);
     // Compute cost
-    double get_cost_value(MapCoord this_point, MapCoord end_point);
+    double get_cost_value(const MapCoord& this_point, const MapCoord& end_point);
 };
 

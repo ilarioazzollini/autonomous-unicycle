@@ -9,7 +9,7 @@ TEST(test_matrix, initialization_and_fill)
     Matrix matrix = Matrix(2,2);
 
     matrix.fill(5);
-    matrix.set(0,0,10);
+    matrix[0][0] = 10;
     matrix[1][1] = 2.5;
 
     EXPECT_EQ(matrix[0][0], 10);

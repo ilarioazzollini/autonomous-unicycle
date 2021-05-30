@@ -19,10 +19,10 @@ TEST(test_planner, no_obstacles)
     goal_point.column = 4;
 
     AStar planner = AStar();
-    std::vector<Node> plan = planner.compute_plan(occupancy_matrix, starting_point, goal_point);
+    std::vector<MapCoord> plan = planner.compute_plan(occupancy_matrix, starting_point, goal_point);
 
     EXPECT_EQ(plan.size(), 9);
-    EXPECT_EQ(plan[plan.size() - 1].this_point, goal_point);
+    EXPECT_EQ(plan[plan.size() - 1], goal_point);
 }
 
 TEST(test_planner, feasible_with_obstacles)
@@ -39,18 +39,19 @@ TEST(test_planner, feasible_with_obstacles)
     goal_point.column = 4;
 
     // First wall
-    occupancy_matrix.set(1,0,0);
-    occupancy_matrix.set(1,1,0);
-    occupancy_matrix.set(1,2,0);
+    occupancy_matrix[1][0] = 0;
+    occupancy_matrix[1][1] = 0;
+    occupancy_matrix[1][2] = 0;
 
     // Second wall
-    occupancy_matrix.set(3,3,0);
-    occupancy_matrix.set(4,3,0);
+    occupancy_matrix[3][3] = 0;
+    occupancy_matrix[4][3] = 0;
+
 
     AStar planner = AStar();
-    std::vector<Node> plan = planner.compute_plan(occupancy_matrix, starting_point, goal_point);
+    std::vector<MapCoord> plan = planner.compute_plan(occupancy_matrix, starting_point, goal_point);
 
-    EXPECT_EQ(plan[plan.size() - 1].this_point, goal_point);
+    EXPECT_EQ(plan[plan.size() - 1], goal_point);
 }
 
 TEST(test_planner, unfeasible_problem)
@@ -67,14 +68,14 @@ TEST(test_planner, unfeasible_problem)
     goal_point.column = 4;
 
     // Wall encapsulating the goal point
-    occupancy_matrix.set(3,3,0);
-    occupancy_matrix.set(3,4,0);
-    occupancy_matrix.set(4,3,0);
+    occupancy_matrix[3][3] = 0;
+    occupancy_matrix[3][4] = 0;
+    occupancy_matrix[4][3] = 0;
 
     AStar planner = AStar();
-    std::vector<Node> plan = planner.compute_plan(occupancy_matrix, starting_point, goal_point);
+    std::vector<MapCoord> plan = planner.compute_plan(occupancy_matrix, starting_point, goal_point);
 
-    EXPECT_NE(plan[plan.size() - 1].this_point, goal_point);
+    EXPECT_TRUE(plan.empty());
 }
 
 

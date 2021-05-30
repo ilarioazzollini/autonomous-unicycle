@@ -2,14 +2,33 @@
 #include <algorithm> // std::sort, std::find
 #include <math.h>
 #include <iostream>
+#include <list>
+struct Node {
+  Node* previous_node;
+  MapCoord this_point;
+  double cost_g; // Dijkstra's cost
+  double cost_h; // Greedy's cost  
+};
 
+inline bool operator<(const Node& node1, const Node& node2) {
+  if (node1.cost_g == node2.cost_g){
+    return (node1.cost_h < node2.cost_h);
+  }
+  else {
+      return (node1.cost_g + node1.cost_h < node2.cost_g + node2.cost_h);
+  }
+};
+
+inline bool operator==(const Node& node1, const Node& node2) {
+  return (node1.this_point == node2.this_point);
+};
 
 // Constructor definition
 AStar::AStar() {
 
 }
 
-std::vector<MapCoord> AStar::get_neighbors(Matrix occupancy_matrix, MapCoord current_point) {
+std::vector<MapCoord> AStar::get_neighbors(const Matrix& occupancy_matrix, const MapCoord& current_point) {
     std::vector<MapCoord> neighbors;
     MapCoord neig;
 
@@ -40,7 +59,7 @@ std::vector<MapCoord> AStar::get_neighbors(Matrix occupancy_matrix, MapCoord cur
     return neighbors;
 }
 
-double AStar::get_cost_value(MapCoord this_point, MapCoord end_point){
+double AStar::get_cost_value(const MapCoord& this_point, const MapCoord& end_point){
 
     double cost_value = std::abs(static_cast<int>(end_point.row) - static_cast<int>(this_point.row)) + 
                 std::abs(static_cast<int>(end_point.column) - static_cast<int>(this_point.column)); // Manhattan distance
@@ -48,107 +67,89 @@ double AStar::get_cost_value(MapCoord this_point, MapCoord end_point){
     return cost_value;
 }
 
-std::vector<Node> AStar::compute_plan(Matrix occupancy_matrix, MapCoord starting_point, MapCoord end_point) {
-    MapCoord current_point;
-    MapCoord new_point;
-    Node new_node;
-    std::vector<MapCoord> neighbors;
-    std::vector<Node> explored_nodes;
-    std::vector<Node> visited_nodes;
-    double current_cost_g;
+std::vector<MapCoord> AStar::compute_plan(const Matrix& occupancy_matrix, const MapCoord& starting_point, const MapCoord& end_point) {
+    // We want to use pointers to visited nodes to represent the previous node for efficient lookup.
+    // This requires that we don't use a vector to store these data.
+    // A vector data-structure is stored in contiguous memory and operations such as `push_back`, `erase`, etc
+    // may result in moving the structure to a whole different location in memory, thus invalidating all pointers we may
+    // have stored.
+    // On the other hand, a list is not stored in a contiguous region of memory and thus pointers are guaranteed to remain
+    // valid across the aforementioned operations.
+    std::list<Node> visited_nodes;
+    std::vector<Node> available_nodes;
 
     // Print occupancy matrix
     std::cout<<"occupancy matrix \n" << occupancy_matrix << std::endl;
 
     // Create the initial node and set it as the first explored node
-    new_node.this_point = starting_point;
-    new_node.previous_point = starting_point;
-    new_node.cost_g = 0;
-    new_node.cost_h = get_cost_value(current_point,end_point);
-    explored_nodes.push_back(new_node);
+    Node starting_node;
+    starting_node.this_point = starting_point;
+    starting_node.previous_node = nullptr;
+    starting_node.cost_g = 0;
+    starting_node.cost_h = get_cost_value(starting_node.this_point, end_point);
+    available_nodes.push_back(starting_node);
 
-    // Initialization
-    current_point = starting_point;
-
-    std::cout<< explored_nodes.size() <<std::endl;
-
-    while (explored_nodes.size()!= 0){
+    while (available_nodes.size()!= 0){
 
         // Sort the list of explored nodes
-        std::sort (explored_nodes.begin(), explored_nodes.end());
+        std::sort(available_nodes.begin(), available_nodes.end());
+
+        Node current_node = available_nodes.front();
+        available_nodes.erase(available_nodes.begin()); // Erase it from the available, it will not be an option in the future
 
         // The first node has the min cost so it's the best -> move there and go visit
-        visited_nodes.push_back(explored_nodes[0]);
-        current_point = explored_nodes[0].this_point; // Update current_point
-        current_cost_g = explored_nodes[0].cost_g; // Update current_point
+        visited_nodes.push_back(current_node);
+        auto previous_node = &(visited_nodes.back());
 
-        std::cout<<"current point"<<std::endl;
-        std::cout<<"x: "<< current_point.row << " y: "<<current_point.column<<std::endl;
+        std::cout
+            <<"current point: " << current_node.this_point.row << " " <<current_node.this_point.column
+            << " with cost g: " << current_node.cost_g << " h: " << current_node.cost_h << std::endl;
 
-        std::cout<<"current cost"<<std::endl;
-        std::cout<<"cost_g: "<< explored_nodes[0].cost_g << " cost_h: "<<explored_nodes[0].cost_h<<std::endl;
-
-        explored_nodes.erase (explored_nodes.begin()); // Erase it from the explored, it will not be an option in the future
-
-        if (current_point == end_point){
+        if (current_node.this_point == end_point){
             break;
         }
 
-            // Explore: 1) Get neighbors and
-            //          2) compute the related costs and
-            //          3) push them inside the list of explored nodes
-        neighbors = get_neighbors(occupancy_matrix, current_point);
-
+        // Explore: 1) Get neighbors and
+        //          2) compute the related costs and
+        //          3) push them inside the list of available nodes
+        std::vector<MapCoord> neighbors = get_neighbors(occupancy_matrix, current_node.this_point);
 
         for (size_t i=0; i < neighbors.size(); i++){
-            new_point = neighbors[i];
-            std::cout<<"neighbor: "<< new_point.row << " "<< new_point.column<<std::endl;
-            bool found = false;
-            for (size_t j = 0; j < explored_nodes.size(); j++) {
-                if (explored_nodes[j].this_point == new_point) {
-                    std::cout<<"Found in explored"<<std::endl;
-                    found = true;
-                }
-            }
-            for (size_t j = 0; j < visited_nodes.size(); j++) {
-                if (visited_nodes[j].this_point == new_point) {
-                    std::cout<<"Found in visited"<<std::endl;
-                    found = true;
-                }
-            }
 
-            if (!found) {
-                new_node.this_point = new_point;
-                new_node.previous_point = current_point;
-                new_node.cost_g = current_cost_g + 1;
-                new_node.cost_h = get_cost_value(new_point,end_point);
-                std::cout<<"Add neighbor with cost G "<< new_node.cost_g << " H "<< new_node.cost_h<<std::endl;
-                explored_nodes.push_back(new_node);
+            Node neighbor_node;
+            neighbor_node.this_point = neighbors[i];
+            neighbor_node.previous_node = previous_node;
+            neighbor_node.cost_g = current_node.cost_g + 1;
+            neighbor_node.cost_h = get_cost_value(neighbor_node.this_point, end_point);
+            
+            // We add the neighbor node to the available list only if it's not already included among the available or visited ones
+            if (std::find(available_nodes.begin(), available_nodes.end(), neighbor_node) == available_nodes.end() &&
+                std::find(visited_nodes.begin(), visited_nodes.end(), neighbor_node) == visited_nodes.end())
+            {
+                std::cout<<"Add neighbor with cost G "<< neighbor_node.cost_g << " H "<< neighbor_node.cost_h<<std::endl;
+                available_nodes.push_back(neighbor_node);
             }
         }
-
-
     }
 
     // Final plan reconstruction
-    std::vector<Node> final_plan;
+    std::vector<MapCoord> final_plan;
 
-    Node plan_node = visited_nodes[visited_nodes.size() - 1];
-    final_plan.push_back(plan_node);
+    // Return empty plan if we didn't reach the goal
+    if (visited_nodes.back().this_point != end_point) {
+        return final_plan;
+    }
+
+    Node plan_node = visited_nodes.back();
+    final_plan.push_back(plan_node.this_point);
 
     while(plan_node.this_point != starting_point) {
-        for (size_t w = 0; w < visited_nodes.size(); w++){
-            if (visited_nodes[w].this_point == plan_node.previous_point){
-                plan_node = visited_nodes[w];
-                break;
-            }
-        }
-        final_plan.push_back(plan_node);
+        plan_node = *(plan_node.previous_node);
+        final_plan.push_back(plan_node.this_point);
     }
 
     // Reverse the order in order to have the plan from start to end
     std::reverse(final_plan.begin(),final_plan.end());
 
     return final_plan;
-
 }

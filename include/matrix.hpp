@@ -18,34 +18,30 @@ public:
         }
     }
 
+    const std::vector<double>& operator[](size_t row_index) const
+    {
+        return m_matrix[row_index];
+    }
+
     std::vector<double>& operator[](size_t row_index)
     {
         return m_matrix[row_index];
     }
 
-    size_t rows()
+    size_t rows() const
     {
         return m_rows_n;
     }
 
-    size_t columns()
+    size_t columns() const
     {
         return m_columns_n;
-    }
-
-    double get(size_t row, size_t column){
-        double element = m_matrix[row][column];
-        return element;
-    }
-
-    void set(size_t row, size_t column, double entry){
-        m_matrix[row][column] = entry;
     }
 
     void fill(double entry){
         for (size_t i=0;i<m_rows_n;i++) {
             for (size_t j=0;j<m_columns_n;j++){
-                this->set(i,j,entry);
+                m_matrix[i][j] = entry;
             }
         }
     }
@@ -56,7 +52,7 @@ private:
     std::vector<std::vector<double>> m_matrix;
 };
 
-inline std::ostream &operator<<(std::ostream &outstr, Matrix matrix)
+inline std::ostream &operator<<(std::ostream &outstr, const Matrix& matrix)
 {
     for (size_t i = 0; i < matrix.rows(); i++) {
         outstr << "[";
