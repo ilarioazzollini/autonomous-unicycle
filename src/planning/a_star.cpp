@@ -3,13 +3,33 @@
 #include <math.h>
 #include <iostream>
 
+struct Node {
+  MapCoord previous_point;
+  MapCoord this_point;
+  double cost_g; // Dijkstra's cost
+  double cost_h; // Greedy's cost  
+};
+
+inline bool operator<(Node node1, Node node2) {
+  if (node1.cost_g == node2.cost_g){
+    return (node1.cost_h < node2.cost_h);
+  }
+  else {
+      return (node1.cost_g + node1.cost_h < node2.cost_g + node2.cost_h);
+  }
+};
+
+inline bool operator==(Node node1, Node node2) {
+  return (node1.previous_point == node2.previous_point) && (node1.this_point == node2.this_point) && (node1.cost_g == node2.cost_g) && (node1.cost_h == node2.cost_h);
+};
+
 
 // Constructor definition
 AStar::AStar() {
 
 }
 
-std::vector<MapCoord> AStar::get_neighbors(Matrix occupancy_matrix, MapCoord current_point) {
+std::vector<MapCoord> AStar::get_neighbors(const Matrix& occupancy_matrix, const MapCoord& current_point) {
     std::vector<MapCoord> neighbors;
     MapCoord neig;
 
@@ -40,7 +60,7 @@ std::vector<MapCoord> AStar::get_neighbors(Matrix occupancy_matrix, MapCoord cur
     return neighbors;
 }
 
-double AStar::get_cost_value(MapCoord this_point, MapCoord end_point){
+double AStar::get_cost_value(const MapCoord& this_point, const MapCoord& end_point){
 
     double cost_value = std::abs(static_cast<int>(end_point.row) - static_cast<int>(this_point.row)) + 
                 std::abs(static_cast<int>(end_point.column) - static_cast<int>(this_point.column)); // Manhattan distance
@@ -48,7 +68,7 @@ double AStar::get_cost_value(MapCoord this_point, MapCoord end_point){
     return cost_value;
 }
 
-std::vector<Node> AStar::compute_plan(Matrix occupancy_matrix, MapCoord starting_point, MapCoord end_point) {
+std::vector<MapCoord> AStar::compute_plan(const Matrix& occupancy_matrix, const MapCoord& starting_point, const MapCoord& end_point) {
     MapCoord current_point;
     MapCoord new_point;
     Node new_node;
@@ -72,7 +92,7 @@ std::vector<Node> AStar::compute_plan(Matrix occupancy_matrix, MapCoord starting
 
     std::cout<< explored_nodes.size() <<std::endl;
 
-    while (explored_nodes.size()!= 0){
+    while (!explored_nodes.empty()){
 
         // Sort the list of explored nodes
         std::sort (explored_nodes.begin(), explored_nodes.end());
@@ -131,10 +151,15 @@ std::vector<Node> AStar::compute_plan(Matrix occupancy_matrix, MapCoord starting
     }
 
     // Final plan reconstruction
-    std::vector<Node> final_plan;
+    std::vector<MapCoord> final_plan;
 
     Node plan_node = visited_nodes[visited_nodes.size() - 1];
-    final_plan.push_back(plan_node);
+
+    if (plan_node.this_point != end_point) {
+        return final_plan;
+    }
+
+    final_plan.push_back(plan_node.this_point);
 
     while(plan_node.this_point != starting_point) {
         for (size_t w = 0; w < visited_nodes.size(); w++){
@@ -143,7 +168,7 @@ std::vector<Node> AStar::compute_plan(Matrix occupancy_matrix, MapCoord starting
                 break;
             }
         }
-        final_plan.push_back(plan_node);
+        final_plan.push_back(plan_node.this_point);
     }
 
     // Reverse the order in order to have the plan from start to end

@@ -18,22 +18,28 @@ public:
         }
     }
 
+    const std::vector<double>& operator[](size_t row_index) const
+    {
+        return m_matrix[row_index];
+    }
+
     std::vector<double>& operator[](size_t row_index)
     {
         return m_matrix[row_index];
     }
 
-    size_t rows()
+    size_t rows() const
     {
         return m_rows_n;
     }
 
-    size_t columns()
+    size_t columns() const
     {
         return m_columns_n;
     }
 
-    double get(size_t row, size_t column){
+    double get(size_t row, size_t column)
+    {
         double element = m_matrix[row][column];
         return element;
     }
