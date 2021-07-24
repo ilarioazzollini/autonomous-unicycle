@@ -1,0 +1,90 @@
+ARG uid
+ARG gid
+FROM osrf/ros:galactic-desktop
+
+ENV HOME /root
+ENV USERNAME root
+USER $USERNAME
+WORKDIR $HOME
+
+# Setup access to display (this only works on Ubuntu host)
+RUN apt-get update && apt-get install -y sudo
+RUN mkdir -p $HOME
+RUN echo "$USERNAME:x:${uid}:${gid}:Developer,,,:$HOME:/bin/bash" >> /etc/passwd && \
+    echo "$USERNAME:x:${gid}:" >> /etc/group && \
+    echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USERNAME && \
+    chmod 0440 /etc/sudoers.d/$USERNAME && \
+    chown ${uid}:${gid} -R $HOME
+
+# Install general utilities
+RUN apt-get update && apt-get install -y \
+    curl \
+    nano \
+    python3-pip \
+    vim \
+    wget
+
+# Setup pip
+RUN pip3 install --upgrade pip
+
+# Locale options
+ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/London"
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+RUN apt-get update && apt-get -y install locales tzdata
+
+# Install development tools and ROS tools
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    libbullet-dev \
+    libgtest-dev\
+    python3-colcon-common-extensions \
+    python3-flake8 \
+    python3-pip \
+    python3-pytest-cov \
+    python3-rosdep \
+    python3-setuptools \
+    python3-vcstool
+
+# Install python packages
+RUN pip3 install -U \
+    argcomplete \
+    flake8-blind-except \
+    flake8-builtins \
+    flake8-class-newline \
+    flake8-comprehensions \
+    flake8-deprecated \
+    flake8-docstrings \
+    flake8-import-order \
+    flake8-quotes \
+    pytest-repeat \
+    pytest-rerunfailures \
+    pytest
+
+# Install rqt tools
+RUN apt-get update && apt-get install -y \
+    ros-galactic-python-qt-binding \
+    ros-galactic-qt-gui-core \
+    ros-galactic-rqt*
+
+# Install ROS 2 navigation stack
+RUN apt-get update && apt-get install -y \
+    ros-galactic-navigation2 \
+    ros-galactic-nav2-bringup \
+    '~ros-galactic-turtlebot3-.*'
+
+# Install gazebo
+RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+RUN wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+RUN apt-get update && apt-get install -y \
+    gazebo11 \
+    libgazebo11-dev
+# Install gazebo ROS extensions
+RUN apt-get update && apt-get install -y '~ros-galactic-gazebo-.*'
+
+# Automatically source ROS packages when opening new shell
+RUN echo ' \n\
+echo "Sourcing ROS2 packages..." \n\
+source /opt/ros/galactic/setup.sh ' >> $HOME/.bashrc
