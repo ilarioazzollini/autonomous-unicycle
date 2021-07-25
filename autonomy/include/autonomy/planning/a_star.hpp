@@ -1,5 +1,5 @@
 #pragma once
-#include "matrix.hpp"
+#include "autonomy/data_types/matrix.hpp"
 #include <vector>
 
 // Position in the matrix: (row,column)

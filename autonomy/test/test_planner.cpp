@@ -2,8 +2,8 @@
 
 #include <gtest/gtest.h>
 
-#include "matrix.hpp"
-#include "planning/a_star.hpp"
+#include "autonomy/data_types/matrix.hpp"
+#include "autonomy/planning/a_star.hpp"
 
 TEST(test_planner, no_obstacles)
 {

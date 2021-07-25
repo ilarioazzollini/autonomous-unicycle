@@ -1,4 +1,4 @@
-#include "planning/a_star.hpp"
+#include "autonomy/planning/a_star.hpp"
 #include <algorithm> // std::sort, std::find
 #include <math.h>
 #include <iostream>

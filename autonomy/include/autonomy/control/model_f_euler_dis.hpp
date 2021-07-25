@@ -1,5 +1,5 @@
 #pragma once
-#include "pose2d.hpp"
+#include "autonomy/data_types/pose2d.hpp"
 
 class KinModel {
 public:
