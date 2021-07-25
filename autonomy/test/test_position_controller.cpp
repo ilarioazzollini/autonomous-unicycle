@@ -1,8 +1,8 @@
 #include "assert.h"
-#include "pose2d.hpp"
-#include "control/model_f_euler_dis.hpp"
-#include "control/position_controller.hpp"
-#include "vel_commands.hpp"
+#include "autonomy/data_types/pose2d.hpp"
+#include "autonomy/control/model_f_euler_dis.hpp"
+#include "autonomy/control/position_controller.hpp"
+#include "autonomy/data_types/vel_commands.hpp"
 #include <iostream>
 
 int main() {

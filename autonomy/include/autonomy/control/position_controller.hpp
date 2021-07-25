@@ -1,6 +1,6 @@
 #pragma once
-#include "pose2d.hpp"
-#include "vel_commands.hpp"
+#include "autonomy/data_types/pose2d.hpp"
+#include "autonomy/data_types/vel_commands.hpp"
 
 class PosCtrl {
 public:

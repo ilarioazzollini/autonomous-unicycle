@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "matrix.hpp"
+#include "autonomy/data_types/matrix.hpp"
 
 TEST(test_matrix, initialization_and_fill)
 {
