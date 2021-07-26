@@ -1,4 +1,4 @@
-#include "control/model_f_euler_dis.hpp"
+#include "autonomy/control/model_f_euler_dis.hpp"
 #include <math.h>
 
 KinModel::KinModel(Pose2D initial_pose) { m_current_pose = initial_pose; }

@@ -2,8 +2,8 @@
 
 #include <gtest/gtest.h>
 
-#include "pose2d.hpp"
-#include "control/model_f_euler_dis.hpp"
+#include "autonomy/data_types/pose2d.hpp"
+#include "autonomy/control/model_f_euler_dis.hpp"
 
 TEST(test_model, zero_vels_integration)
 {
